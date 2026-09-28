@@ -1,0 +1,5 @@
+python-telegram-bot[job-queue]>=21.6,<23
+google-api-python-client>=2.140
+google-auth>=2.34
+anthropic>=0.60
+tzdata
