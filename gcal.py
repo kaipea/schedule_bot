@@ -39,6 +39,8 @@ def _normalise(raw: dict, calendar_id: str) -> dict:
         "all_day": all_day,
         "location": raw.get("location"),
         "recurring": "recurringEventId" in raw,
+        # Google's per-event "Private" visibility; shared schedules show these as "Busy".
+        "private": raw.get("visibility") in ("private", "confidential"),
     }
 
 
@@ -91,8 +93,11 @@ class Calendar:
         return _normalise(self._run(self._svc.events().get(calendarId=cid, eventId=event_id)), cid)
 
     def create_event(self, title: str, start: str, end: str | None = None, all_day: bool = False,
-                     location: str | None = None, description: str | None = None) -> dict:
+                     location: str | None = None, description: str | None = None,
+                     private: bool = False) -> dict:
         body = {"summary": title, **_time_fields(start, end, bool(all_day))}
+        if private:
+            body["visibility"] = "private"
         if location:
             body["location"] = location
         if description:
@@ -102,11 +107,14 @@ class Calendar:
 
     def update_event(self, event_id: str, calendar_id: str | None = None, title: str | None = None,
                      start: str | None = None, end: str | None = None, all_day: bool | None = None,
-                     location: str | None = None, description: str | None = None) -> dict:
+                     location: str | None = None, description: str | None = None,
+                     private: bool | None = None) -> dict:
         cid = calendar_id or config.WRITE_CALENDAR_ID
         raw = self._run(self._svc.events().get(calendarId=cid, eventId=event_id))
         cur = _normalise(raw, cid)
 
+        if private is not None:
+            raw["visibility"] = "private" if private else "default"
         if title:
             raw["summary"] = title
         if location is not None:

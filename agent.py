@@ -31,6 +31,7 @@ TOOLS = [
                 "end": {"type": "string", "description": "Same format as start. For all-day events this is the last day, inclusive."},
                 "all_day": {"type": "boolean"},
                 "location": {"type": "string"},
+                "private": {"type": "boolean", "description": "Private events appear only as 'Busy' in the schedule shared with others"},
                 "description": {"type": "string"},
             },
             "required": ["title", "start"],
@@ -49,6 +50,7 @@ TOOLS = [
                 "end": {"type": "string"},
                 "all_day": {"type": "boolean"},
                 "location": {"type": "string"},
+                "private": {"type": "boolean", "description": "Private events appear only as 'Busy' in the schedule shared with others"},
                 "description": {"type": "string"},
             },
             "required": ["event_id"],
@@ -98,6 +100,7 @@ def _event_out(e: dict) -> dict:
         "all_day": e["all_day"],
         "location": e.get("location"),
         "recurring": e["recurring"],
+        "private": e.get("private", False),
         "editable": e["calendar_id"] == config.WRITE_CALENDAR_ID,
     }
     if e["all_day"]:
@@ -127,6 +130,8 @@ class Agent:
             "- delete_event only stages a deletion; tell the user to tap the button to confirm.\n"
             "- Events with editable=false are on read-only calendars; say so rather than trying to edit them.\n"
             "- For recurring events, changes apply to the single occurrence you edit.\n"
+            "- The user's week is sent to family, friends and colleagues every week. Events marked "
+            "private show to them only as 'Busy'. Set private when the user asks to hide an event.\n"
             "- Reply briefly in plain text (no markdown). Confirm what you changed, with day and time."
         )
 

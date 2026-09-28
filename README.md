@@ -64,6 +64,25 @@ Use the same key as your Sejarah bot, or make a new one at console.anthropic.com
 
 Once `TELEGRAM_CHAT_ID` is set, the bot only answers you and ignores messages from anyone else.
 
+## Sharing your week
+
+Every Monday (or whatever `WEEKLY_DAY` is), right after your own brief, the bot sends the week's schedule to everyone you've approved. They get full titles and locations, with no to-dos.
+
+**Adding someone:** they open your bot in Telegram and press **Start**. You get an **Approve / Decline** button. Nobody receives anything until you approve them. (Telegram doesn't let a bot message someone who hasn't messaged it first, so they have to take this step.)
+
+| | |
+|---|---|
+| `/people` | Who gets your week |
+| `/remove 123456` | Stop sending to someone (the number is shown in `/people`) |
+| `/preview` | See exactly what they'll receive |
+| `/sharenow` | Send it to everyone now, e.g. after a big change mid-week |
+
+Recipients can send `/stop` to leave, and you'll be told when they do.
+
+**Hiding an event:** open it in Google Calendar and set its visibility to **Private**, or tell the bot "make Tuesday's 9am private". Recipients see only `Busy` for that time. In your own briefs, private events are marked 🔒.
+
+Set `OWNER_NAME` (e.g. `Wei Kai`) so the header they see reads "Wei Kai's week".
+
 ## Notes
 
 - **Where edits go.** New events go on `GOOGLE_CALENDAR_ID`. Calendars in `GOOGLE_EXTRA_CALENDAR_IDS` show up in the briefs, but the bot won't edit them unless you share them with **Make changes to events**.

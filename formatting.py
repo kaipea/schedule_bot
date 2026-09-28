@@ -19,10 +19,15 @@ def _time_label(ev: dict, d: date) -> str:
     return f"{left}–{right}"
 
 
-def _event_line(ev: dict, d: date) -> str:
-    line = f"<code>{_time_label(ev, d):<11}</code> {escape(ev['title'])}"
+def _event_line(ev: dict, d: date, shared: bool = False) -> str:
+    label = f"<code>{_time_label(ev, d):<11}</code>"
+    if shared and ev.get("private"):
+        return f"{label} Busy"
+    line = f"{label} {escape(ev['title'])}"
     if ev.get("location"):
         line += f" <i>· {escape(ev['location'])}</i>"
+    if not shared and ev.get("private"):
+        line += " 🔒"  # in your own briefs: shown to recipients only as "Busy"
     return line
 
 
@@ -79,6 +84,18 @@ def weekly_brief(start: date, events: list[dict], open_todos: list[dict], today:
         lines += [_todo_line(t, today) for t in dated]
         if undated:
             lines.append(f"<i>+{len(undated)} with no date — /todo</i>")
+    return "\n".join(lines)
+
+
+def shared_week(start: date, events: list[dict], owner: str) -> str:
+    """What recipients get: the week's events, no to-dos; private events appear as Busy."""
+    end = start + timedelta(days=6)
+    who = f"{escape(owner)}'s week" if owner else "Schedule"
+    lines = [f"<b>{who}: {start:%d %b} – {end:%d %b}</b>"]
+    for i in range(7):
+        d = start + timedelta(days=i)
+        day = [_event_line(e, d, shared=True) for e in events if _on_day(e, d)]
+        lines += ["", f"<b>{d:%a %d %b}</b>"] + (day or ["—"])
     return "\n".join(lines)
 
 

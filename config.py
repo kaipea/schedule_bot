@@ -34,6 +34,9 @@ TZ = ZoneInfo(os.environ.get("BOT_TIMEZONE", "Asia/Singapore"))
 DAILY_TIME = _clock(os.environ.get("DAILY_TIME", "07:30"))
 WEEKLY_DAY = int(os.environ.get("WEEKLY_DAY", "0"))  # 0 = Monday ... 6 = Sunday
 
+# --- Sharing ---
+OWNER_NAME = os.environ.get("OWNER_NAME", "")  # shown in the header recipients see, e.g. "Wei Kai's week"
+
 # --- Storage ---
 DB_PATH = os.environ.get("DB_PATH", "data/bot.db")  # mount a Railway volume at /app/data
 
